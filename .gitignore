@@ -1,0 +1,24 @@
+.env
+.env.*
+*.env
+**/.env
+**/.env.*
+
+# Python virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python caches
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Jupyter / notebooks
+.ipynb_checkpoints/
+
+# OS junk
+.DS_Store
+Thumbs.db
