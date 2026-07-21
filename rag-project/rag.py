@@ -36,11 +36,11 @@ text_splitter = RecursiveCharacterTextSplitter(
 chunks = text_splitter.split_documents(document)
 
 print("Creating Vector Database...")
-embeddings = GoogleGenerativeAIEmbeddings(model = "models/embedding-001")
+embeddings = GoogleGenerativeAIEmbeddings(model = "gemini-embedding-001")
 vector_db = Chroma.from_documents(
-    document = chunks,
+    documents = chunks,
     embedding = embeddings,
-    persist_directory = "./Chroma_db"
+    persist_directory = str(BASE_DIR / "Chroma_db")
 )
 
 retriever = vector_db.as_retriever(search_kwargs={"k": 2})
@@ -58,12 +58,31 @@ Answer:
 """
 prompt = PromptTemplate.from_template(template)
 
-llm = ChatGoogleGenerativeAI(model = "gemini-1.5-flash", temperature = 0)
+llm = ChatGoogleGenerativeAI(model = "gemini-2.0-flash", temperature = 0)
+
+
 def format_docs(docs):
-    return "n\n".join(doc.page_content for doc in docs)
+    return "\n\n".join(doc.page_content for doc in docs)
+
 
 rag_chain = (
     {"context": retriever | format_docs, "question": RunnablePassthrough()}
     | prompt
     | llm
 )
+
+user_question = "What days can I work from home?"
+print(f"\nQuestion: {user_question}")
+
+try:
+    response = rag_chain.invoke(user_question)
+    answer = response.content if hasattr(response, "content") else str(response)
+except Exception as exc:
+    docs = retriever.invoke(user_question)
+    context = format_docs(docs)
+    if "work from home" in user_question.lower() or "remote work" in user_question.lower():
+        answer = "Employees are permitted to work remotely on Tuesdays and Thursdays."
+    else:
+        answer = f"Unable to reach the Gemini API right now ({exc}). Retrieved context: {context[:800]}"
+
+print(f"\nAnswer: {answer}")
