@@ -10,6 +10,11 @@ venv/
 env/
 ENV/
 
+# Local project artifacts
+.vscode/
+Chroma_db/
+rag-project/Chroma_db/
+
 # Python caches
 __pycache__/
 *.py[cod]
