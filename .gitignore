@@ -4,6 +4,13 @@
 **/.env
 **/.env.*
 
+# Environment files
+.env
+.env.*
+*.env
+**/.env
+**/.env.*
+
 # Python virtual environments
 .venv/
 venv/
