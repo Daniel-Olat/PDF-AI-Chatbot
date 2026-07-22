@@ -71,18 +71,18 @@ rag_chain = (
     | llm
 )
 
-user_question = "What days can I work from home?"
-print(f"\nQuestion: {user_question}")
-
-try:
-    response = rag_chain.invoke(user_question)
-    answer = response.content if hasattr(response, "content") else str(response)
-except Exception as exc:
-    docs = retriever.invoke(user_question)
-    context = format_docs(docs)
-    if "work from home" in user_question.lower() or "remote work" in user_question.lower():
-        answer = "Employees are permitted to work remotely on Tuesdays and Thursdays."
+print("\n  PDF Chatbot Initialized")
+print("Type 'Exit' or 'quit' to stop \n")
+while True:
+    user_input = input("Question:  ")
+    if user_input.lower() in ['exit', 'quit']:
+        print("Exiting Chatbot, Goodbye...")
+        break
+    
+    response = rag_chain.invoke(user_input)
+    if isinstance(response.content , list):
+        clean_answer = response.content[0].text
     else:
-        answer = f"Unable to reach the Gemini API right now ({exc}). Retrieved context: {context[:800]}"
-
-print(f"\nAnswer: {answer}")
+        clean_answer = response.content
+    print(f"Answer: {clean_answer}\n")
+        
